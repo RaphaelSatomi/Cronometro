@@ -1,79 +1,62 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Image} from 'react-native';
-
-
-class Botao extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {};
-        this.styles = StyleSheet.create({
-            botao:{
-                width:250,
-                height:50,
-                borderWidth:2,
-                borderColor: props.color,
-                backgroundColor:'transparent',
-                borderRadius:25
-            },
-            botaoArea:{
-                flex:1,
-                flexDirection:'row',
-                justifyContent:'center',
-                alignItems:'center'
-            },
-            botaoText:{
-                color: props.color,
-                fontSize:16,
-                fontWeight:'bold'
-            }
-        });
-    }
-    render() {
-        return(
-            <TouchableOpacity style={this.styles.botao} onPress={this.props.clicando}>
-                <View style={this.styles.botaoArea}>
-                    <Text style={this.styles.botaoText}>{this.props.text}</Text>
-                </View>
-            </TouchableOpacity>
-        );
-    }
-}
+import { View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 
 export default class PrimeiroProjeto extends Component{
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state = {texto: ""};
+        this.state = {n:0, btn:'START'};
+        this.timer = null;
 
-        this.frases = [
-            'A vida trará coisas boas se tiveres paciência.', 
-            'Demonstre amor e alegria em todas as oportunidades e verás que a paz nasce dentro de você.', 
-            'Não compense na ira o que lhe falta na razão.', 
-            'Defeitos e virtudes são apenas dois lados da mesma moeda.', 
-            'A maior de todas as torres começa no solo.', 
-            'Não há que ser forte. Há que ser flexível.', 
-            'Gente todo dia arruma os cabelos, por que não o coração?'];
-
-        this.quebrarBiscoito = this.quebrarBiscoito.bind(this);
+        this.start = this.start.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
-    quebrarBiscoito() {
+    start(){
         let s = this.state;
-        let r =  Math.floor(Math.random() * this.frases.length);
+        if(this.timer !== null){
+            clearInterval(this.timer);
+            this.timer = null;
 
-        s.texto = '"'+this.frases[r]+'"';
+            s.btn = "START";
+            this.setState(s);
+        }else{
+            this.timer = setInterval(()=>{
+                s.n += 0.1;
+                s.btn = "STOP";
+                
+                this.setState(s);
+            }, 100);
+        }
+
+
+    }
+    reset(){
+        if(this.timer !== null){
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+        let s = this.state;
+        s.n = 0;
+        s.btn = "START";
+
         this.setState(s);
     }
 
     render() {
         return(
             <View style={styles.body}>
-                <Image source={require("./images/biscoito.png")}/>
+                <Image source={require("./images/relogio.png")}/>
+                <Text style={styles.timer}>{this.state.n.toFixed(1)}</Text>
 
-                <Text style={styles.texto}>{this.state.texto}</Text>
-
-                <Botao color="#b59619" text="Quebrar Biscoito" clicando={this.quebrarBiscoito}/>
+                <View style={styles.btnArea}>
+                    <TouchableOpacity style={styles.btn} onPress={this.start}>
+                        <Text style={styles.btnText}>{this.state.btn}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btn} onPress={this.reset}>
+                        <Text style={styles.btnText}>RESET</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         )
     }
@@ -83,12 +66,34 @@ const styles = StyleSheet.create({
     body:{
         paddingTop:20,
         flex:1,
+        alignItems:'center',
         justifyContent:'center',
-        alignItems:'center'
+        backgroundColor:'#2c1f30'
     },
-    texto:{
+    timer:{
+        color:'#baa07a',
+        fontSize:80,
+        fontWeight:'bold',
+        backgroundColor:'transparent',
+        marginTop:-160
+    },
+    btnArea:{
+        flexDirection:'row',
+        height:40,
+        marginTop:80
+    },
+    btn:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'#886532',
+        height:40,
+        borderRadius:5,
+        margin:10
+    },
+    btnText:{
         fontSize:17,
-        color:'#b59619',
-        margin:30
+        fontWeight:'bold',
+        color:'#FFF'
     }
 })
