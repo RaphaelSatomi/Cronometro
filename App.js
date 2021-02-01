@@ -1,85 +1,79 @@
 import React, { Component } from 'react';
-import { View, ImageBackground, StyleSheet, Text, Button, Image, TouchableWithoutFeedback} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image} from 'react-native';
 
-export default class PrimeiroProjeto extends Component{
+
+class Botao extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {consumido:0, status:'Ruim', pct:'0'};
+        this.state = {};
+        this.styles = StyleSheet.create({
+            botao:{
+                width:250,
+                height:50,
+                borderWidth:2,
+                borderColor: props.color,
+                backgroundColor:'transparent',
+                borderRadius:25
+            },
+            botaoArea:{
+                flex:1,
+                flexDirection:'row',
+                justifyContent:'center',
+                alignItems:'center'
+            },
+            botaoText:{
+                color: props.color,
+                fontSize:16,
+                fontWeight:'bold'
+            }
+        });
+    }
+    render() {
+        return(
+            <TouchableOpacity style={this.styles.botao} onPress={this.props.clicando}>
+                <View style={this.styles.botaoArea}>
+                    <Text style={this.styles.botaoText}>{this.props.text}</Text>
+                </View>
+            </TouchableOpacity>
+        );
+    }
+}
 
-        this.addCopo = this.addCopo.bind(this);
-        this.atualizar = this.atualizar.bind(this);
-        this.reload = this.reload.bind(this);
+export default class PrimeiroProjeto extends Component{
+
+    constructor(props){
+        super(props);
+        this.state = {texto: ""};
+
+        this.frases = [
+            'A vida trará coisas boas se tiveres paciência.', 
+            'Demonstre amor e alegria em todas as oportunidades e verás que a paz nasce dentro de você.', 
+            'Não compense na ira o que lhe falta na razão.', 
+            'Defeitos e virtudes são apenas dois lados da mesma moeda.', 
+            'A maior de todas as torres começa no solo.', 
+            'Não há que ser forte. Há que ser flexível.', 
+            'Gente todo dia arruma os cabelos, por que não o coração?'];
+
+        this.quebrarBiscoito = this.quebrarBiscoito.bind(this);
     }
 
-    atualizar() {
+    quebrarBiscoito() {
         let s = this.state;
-        s.pct = Math.floor((s.consumido/2000)*100);
+        let r =  Math.floor(Math.random() * this.frases.length);
 
-        if(s.pct >= 150){
-            s.status = "Ótimo";
-        }else if(s.pct >= 100){
-            s.status = "Bom";
-        }else{
-            s.status = "Ruim";
-        }
-
-        this.setState(s);
-    }
-
-    addCopo() {
-        let s = this.state;
-        s.consumido += 200;
-
-        this.setState(s);
-
-        this.atualizar();
-    }
-    reload() {
-        let s = this.state;
-        s.consumido = 0;
-        s.status = 'Ruim';
-        s.pct = '0';
-
+        s.texto = '"'+this.frases[r]+'"';
         this.setState(s);
     }
 
     render() {
         return(
             <View style={styles.body}>
-                <ImageBackground source={require('./images/waterbg.png')} style={styles.bgimage}>
-                    <View>
-                        <View style={styles.infoArea}>
-                            <View style={styles.area}>
-                                <Text style={styles.areaTitulo}>Meta</Text>
-                                <Text style={styles.areaDado}>2000ml</Text>
-                            </View>
-                            <View style={styles.area}>
-                                <Text style={styles.areaTitulo}>Consumido</Text>
-                                <Text style={styles.areaDado}>{this.state.consumido}ml</Text>
-                            </View>
-                            <View style={styles.area}>
-                                <Text style={styles.areaTitulo}>Status</Text>
-                                <Text style={styles.areaDado}>{this.state.status}</Text>
-                            </View>
-                        </View>
+                <Image source={require("./images/biscoito.png")}/>
 
-                        <View style={styles.pctArea}>
-                            <Text style={styles.pctText}>{this.state.pct}%</Text>
-                        </View>
+                <Text style={styles.texto}>{this.state.texto}</Text>
 
-                        <View style={styles.btnArea}>
-                            <Button title="Beber 200ml" onPress={this.addCopo}/>
-                        </View>
-
-                        <TouchableWithoutFeedback onPress={this.reload}>
-                            <View style={styles.reloadArea}>
-                                <Image style={styles.reloadIcon} source={require('./images/reload.jpg')} />
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-
-                </ImageBackground>
+                <Botao color="#b59619" text="Quebrar Biscoito" clicando={this.quebrarBiscoito}/>
             </View>
         )
     }
@@ -87,48 +81,14 @@ export default class PrimeiroProjeto extends Component{
 
 const styles = StyleSheet.create({
     body:{
-        flex:1
-    },
-    bgimage:{
+        paddingTop:20,
         flex:1,
-        width:null
-    },
-    infoArea:{
-        flex:1,
-        flexDirection:'row',
-        marginTop:70
-    },
-    area:{
-        flex:1,
+        justifyContent:'center',
         alignItems:'center'
     },
-    areaTitulo:{
-        color:'#45b2fc'
-    },
-    areaDado:{
-        color:'#2b4274',
-        fontSize:15,
-        fontWeight:'bold'
-    },
-    pctArea:{
-        marginTop:200,
-        alignItems:'center'
-    },
-    pctText:{
-        fontSize:70,
-        color:'#FFF',
-        backgroundColor:'transparent'
-    },
-    btnArea:{
-        marginTop:10,
-        alignItems:'center'
-    },
-    reloadArea:{
-        alignItems:'center',
-        marginTop:15,
-    },
-    reloadIcon:{
-        width:30,
-        height:30
+    texto:{
+        fontSize:17,
+        color:'#b59619',
+        margin:30
     }
 })
